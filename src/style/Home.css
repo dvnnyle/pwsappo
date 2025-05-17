@@ -1,0 +1,73 @@
+/* src/style/Home.css */
+
+
+.subtitle {
+  font-size: 14PX;  /* smaller than h2 */
+  margin-left: 12px;   /* space between main text and "Welcome" */
+  color: #666;        /* optional: lighter color */
+  font-weight: normal;
+}
+
+.rectangle-card {
+  width: calc(100% - 20px); /* full width minus horizontal margins */
+  margin: 10px 10px 0 10px; /* top right bottom left */
+  padding: 10px;
+  width: calc(100% - 20px); /* full width minus horizontal margins */
+  background: #FFF;
+  border-radius: 25px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.logo {
+  max-width: 100%;       /* Make sure it doesn't overflow */
+  margin: 10px 10px;        /* 10px margin on left and right */
+  display: flex;
+  justify-content: center;
+  border-radius: 25px ;
+  box-sizing: border-box; /* Include padding in width calculation */
+
+}
+
+
+
+
+.logo img {
+  width: 50px; /* or whatever size */
+  height: auto;
+}
+
+
+@keyframes slideSideToSide {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: 50px; /* move 50px to the right */
+  }
+}
+
+.rectangle-image {
+  width: 100%;
+  max-height: 400px;
+  border-radius: 20px;
+  object-fit: cover;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.image-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #212121;
+  text-transform: uppercase;
+    margin-top: 10px;
+    margin-bottom: 0;
+      text-align: left;
+
+
+}
+
+
