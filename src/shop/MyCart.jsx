@@ -5,7 +5,6 @@ import "./MyCart.css";
 export default function MyCart() {
   const [cartItems, setCartItems] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
