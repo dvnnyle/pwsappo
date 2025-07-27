@@ -17,8 +17,11 @@ import News from "./pages/News/News.jsx";
 import NewsForm from "./pages/News/NewsForm";
 import Settings from "./user/SettingsTabs/Settings";
 import Tickets from "./TicketSystem/Tickets";
-import Orders from "./user/SettingsTabs/Orders";
 import Support from "./user/SettingsTabs/Support";
+import Orders from "./user/SettingsTabs/Orders"; // <-- Add this line
+
+import Admin from "./console/admin";
+import CustomerOrderList from "./console/CustomerOrderList";
 
 import PageTransition from "./comp/PageTransition";
 
@@ -162,6 +165,22 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <Support />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/customer-orders/:userId"
+          element={
+            <PageTransition>
+              <CustomerOrderList />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PageTransition>
+              <Admin />
             </PageTransition>
           }
         />

@@ -9,6 +9,7 @@
   border-radius: 25px;
   padding: 10px;
   background-color: #f9f9f9;
+  margin-top: 10px;
   
 }
 
@@ -190,11 +191,14 @@ padding: 10px 0;
 
 
 .news-form textarea {
-  margin-bottom: 16px; /* Adjust as needed */
+  margin-bottom: 16px;
   border-radius: 25px;
-        padding: 16px; /* Add this line to move text right */
+  padding: 16px;
   border: 1px solid #222;
-
+  min-height: 160px;
+  width: 100%;      /* Add this line for fixed width */
+  max-width: 100%;   /* Prevent overflow on small screens */
+  box-sizing: border-box;
 }
 
 
@@ -248,16 +252,16 @@ body.news-page-body,
 @media (max-width: 600px) {
   body.news-page-body,
   .news-form-page-body {
-    padding-bottom: 120px; /* Even more space for mobile if needed */
+    padding-bottom: 110px; /* Even more space for mobile if needed */
   }
 }
 
 .posts-list {
-  padding-bottom: 120px;
+  padding-bottom: 110px;
 }
 
 @media (max-width: 600px) {
   .posts-list {
-    padding-bottom: 120px;
+    padding-bottom: 110px;
   }
 }
