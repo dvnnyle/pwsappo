@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { db } from "../firebase";
+
+
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import "./CustomerOrderList.css";
 
-const BACKEND_URL = "http://localhost:4000"; // Change to your backend URL
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || ""; // Change to your backend URL
 
 export default function CustomerOrderList() {
   const { userId } = useParams();
