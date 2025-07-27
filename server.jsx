@@ -126,7 +126,7 @@ app.post('/capture-payment', async (req, res) => {
     const capturePayload = {
       modificationAmount: { currency: 'NOK', value: amountValue }
     };
-    const url = `https://apitest.vipps.no/epayment/v1/payments/${reference}/capture`;
+    const url = `https://api.vipps.no/epayment/v1/payments/${reference}/capture`;
     const response = await axios.post(
       url,
       capturePayload,
@@ -156,7 +156,7 @@ app.get('/payment-details/:reference', async (req, res) => {
   const { reference } = req.params;
   try {
     const accessToken = await getAccessToken();
-    const url = `https://apitest.vipps.no/epayment/v1/payments/${reference}`;
+    const url = `https://api.vipps.no/epayment/v1/payments/${reference}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -184,7 +184,7 @@ app.post('/refund-payment', async (req, res) => {
     const refundPayload = {
       modificationAmount: { currency: 'NOK', value: amountValue }
     };
-    const url = `https://apitest.vipps.no/epayment/v1/payments/${reference}/refund`;
+    const url = `https://api.vipps.no/epayment/v1/payments/${reference}/refund`;
     const response = await axios.post(
       url,
       refundPayload,
