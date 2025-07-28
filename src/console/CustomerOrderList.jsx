@@ -197,7 +197,7 @@ export default function CustomerOrderList() {
       
       // Auto-capture suggestion for authorized but not captured payments
       if (paymentDetails.state === 'AUTHORIZED' && paymentDetails.aggregate?.capturedAmount?.value === 0) {
-        const shouldAutoCapture = confirm('Payment is authorized but not captured. Auto-capture now?');
+        const shouldAutoCapture = window.confirm('Payment is authorized but not captured. Auto-capture now?');
         if (shouldAutoCapture) {
           const order = orders.find(o => o.orderReference === orderReference);
           if (order) {
