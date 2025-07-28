@@ -142,6 +142,35 @@ export default function PaymentReturn() {
     return () => unsubscribe();
   }, [pspReference]);
 
+  // Add this useEffect after the existing ones
+  useEffect(() => {
+    const autoCapture = async () => {
+      if (!orderReference || !totalPrice) return;
+      
+      try {
+        console.log('Auto-capturing payment for:', orderReference);
+        
+        const captureResult = await captureVippsPayment({
+          reference: orderReference,
+          amountValue: Math.round(totalPrice * 100), // Convert to øre
+        });
+        
+        console.log('Auto-capture successful:', captureResult);
+        setVippsCaptureResponse(captureResult);
+        setPspReference(captureResult.pspReference || orderReference);
+        
+      } catch (error) {
+        console.error('Auto-capture failed:', error);
+        // Still set pspReference so order can be saved
+        setPspReference(orderReference);
+      }
+    };
+
+    // Auto-capture after a short delay to ensure payment is authorized
+    const timer = setTimeout(autoCapture, 2000);
+    return () => clearTimeout(timer);
+  }, [orderReference, totalPrice]);
+
   function formatDurationFromMinutes(minutes) {
     if (!minutes || minutes <= 0) return "Ukjent varighet";
     if (minutes < 60) return `${minutes} minutter`;
