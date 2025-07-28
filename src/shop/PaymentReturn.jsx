@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./PaymentReturn.css";
 import { db, auth } from "../firebase";
-import { doc, collection, addDoc, getDocs } from "firebase/firestore";
+import { doc, collection, addDoc, getDocs, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { captureVippsPayment } from "../vipps/vipps";
 
@@ -96,7 +96,7 @@ export default function PaymentReturn() {
       const storedName = localStorage.getItem("buyerName");
       const storedEmail = localStorage.getItem("email");
       const storedCart = localStorage.getItem("cartItems");
-      const storedPspReference = pspReference; // Use state, not localStorage
+      const storedPspReference = pspReference;
 
       if (storedCart && storedReference) {
         const parsedCart = JSON.parse(storedCart);
@@ -114,8 +114,8 @@ export default function PaymentReturn() {
             0
           ),
           pspReference: storedPspReference || "",
-          vippsCaptureResponse: null, // Will be updated when manually captured
-          captureStatus: "PENDING", // Track capture status
+          vippsCaptureResponse: null,
+          captureStatus: "PENDING", // Will be updated to CAPTURED after auto-capture
         };
 
         try {
@@ -128,8 +128,38 @@ export default function PaymentReturn() {
           );
 
           if (!alreadyExists) {
-            await addDoc(ordersColRef, newOrder);
-            console.log("Order added to newOrders subcollection!");
+            const docRef = await addDoc(ordersColRef, newOrder);
+            console.log("✅ Order added to newOrders subcollection!");
+            
+            // NOW trigger auto-capture after order is saved
+            setTimeout(async () => {
+              try {
+                console.log('🔄 Starting auto-capture for:', storedReference);
+                
+                const captureResult = await captureVippsPayment({
+                  reference: storedReference,
+                  amountValue: Math.round(newOrder.totalPrice * 100),
+                });
+                
+                console.log('✅ Auto-capture successful:', captureResult);
+                setVippsCaptureResponse(captureResult);
+                
+                // Update the order we just created with capture status
+                await updateDoc(docRef, {
+                  captureStatus: "CAPTURED",
+                  capturedAt: new Date().toISOString(),
+                  capturedAmount: Math.round(newOrder.totalPrice * 100),
+                  vippsCaptureResponse: captureResult,
+                  pspReference: captureResult.pspReference || storedReference
+                });
+                
+                console.log("✅ Auto-capture: Updated order status to CAPTURED");
+                
+              } catch (captureError) {
+                console.error('❌ Auto-capture failed:', captureError);
+              }
+            }, 2000); // 2 second delay after order is saved
+            
           } else {
             console.log("Order with this reference already exists, not adding duplicate.");
           }
@@ -141,35 +171,6 @@ export default function PaymentReturn() {
 
     return () => unsubscribe();
   }, [pspReference]);
-
-  // Add this useEffect after the existing ones
-  useEffect(() => {
-    const autoCapture = async () => {
-      if (!orderReference || !totalPrice) return;
-      
-      try {
-        console.log('Auto-capturing payment for:', orderReference);
-        
-        const captureResult = await captureVippsPayment({
-          reference: orderReference,
-          amountValue: Math.round(totalPrice * 100), // Convert to øre
-        });
-        
-        console.log('Auto-capture successful:', captureResult);
-        setVippsCaptureResponse(captureResult);
-        setPspReference(captureResult.pspReference || orderReference);
-        
-      } catch (error) {
-        console.error('Auto-capture failed:', error);
-        // Still set pspReference so order can be saved
-        setPspReference(orderReference);
-      }
-    };
-
-    // Auto-capture after a short delay to ensure payment is authorized
-    const timer = setTimeout(autoCapture, 2000);
-    return () => clearTimeout(timer);
-  }, [orderReference, totalPrice]);
 
   function formatDurationFromMinutes(minutes) {
     if (!minutes || minutes <= 0) return "Ukjent varighet";

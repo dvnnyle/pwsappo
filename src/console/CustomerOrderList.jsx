@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { db } from "../firebase";
-
-
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import "./CustomerOrderList.css";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || ""; // Change to your backend URL
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "";
 
 export default function CustomerOrderList() {
   const { userId } = useParams();
@@ -17,7 +15,6 @@ export default function CustomerOrderList() {
   const [refundedItems, setRefundedItems] = useState({});
   const [refundedOrders, setRefundedOrders] = useState({});
   const [refundQtys, setRefundQtys] = useState({});
-  const [capturedOrders, setCapturedOrders] = useState({});
 
   useEffect(() => {
     async function fetchOrders() {
@@ -41,24 +38,11 @@ export default function CustomerOrderList() {
   }, [userId]);
 
   useEffect(() => {
-    // Load refunded state from localStorage on mount
+    // Load refunded state from localStorage on mount (only for refunds)
     const refundedItemsLS = JSON.parse(localStorage.getItem("refundedItems") || "{}");
     const refundedOrdersLS = JSON.parse(localStorage.getItem("refundedOrders") || "{}");
-    const capturedOrdersLS = JSON.parse(localStorage.getItem("capturedOrders") || "{}");
     setRefundedItems(refundedItemsLS);
     setRefundedOrders(refundedOrdersLS);
-    
-    // Also check database for capture status
-    const dbCapturedOrders = {};
-    orders.forEach(order => {
-      if (order.captureStatus === "CAPTURED") {
-        dbCapturedOrders[order.orderReference] = true;
-      }
-    });
-    
-    // Merge localStorage and database capture status
-    const mergedCapturedOrders = { ...capturedOrdersLS, ...dbCapturedOrders };
-    setCapturedOrders(mergedCapturedOrders);
   }, [orders]);
 
   const toggleDropdown = (idx) => {
@@ -75,10 +59,10 @@ export default function CustomerOrderList() {
     localStorage.setItem("refundedOrders", JSON.stringify(newRefundedOrders));
   }
 
-  function updateCapturedOrders(newCapturedOrders) {
-    setCapturedOrders(newCapturedOrders);
-    localStorage.setItem("capturedOrders", JSON.stringify(newCapturedOrders));
-  }
+  // Helper function to check if order is captured (based on database only)
+  const isOrderCaptured = (order) => {
+    return order.captureStatus === "CAPTURED";
+  };
 
   async function handleRefund(orderReference, item, refundQty, pricePerUnit) {
     try {
@@ -130,7 +114,7 @@ export default function CustomerOrderList() {
 
   async function handleCapture(orderReference, totalPrice) {
     try {
-      console.log('Attempting capture for:', {
+      console.log('Attempting manual capture for:', {
         orderReference,
         totalPrice,
         amountInMinorUnits: Math.round(totalPrice * 100)
@@ -155,7 +139,7 @@ export default function CustomerOrderList() {
       }
 
       const captureResult = await response.json();
-      console.log('Capture successful:', captureResult);
+      console.log('Manual capture successful:', captureResult);
       alert("Payment captured successfully");
 
       // Update the order in Firestore with capture status
@@ -171,11 +155,17 @@ export default function CustomerOrderList() {
           });
           console.log("Updated order capture status in Firestore");
           
-          // Update the local orders state to reflect the change
+          // Update the local orders state to reflect the change immediately
           setOrders(prevOrders => 
             prevOrders.map(order => 
               order.orderReference === orderReference 
-                ? { ...order, captureStatus: "CAPTURED" }
+                ? { 
+                    ...order, 
+                    captureStatus: "CAPTURED",
+                    capturedAt: new Date().toISOString(),
+                    capturedAmount: amountInMinorUnits,
+                    vippsCaptureResponse: captureResult
+                  }
                 : order
             )
           );
@@ -183,13 +173,6 @@ export default function CustomerOrderList() {
       } catch (firestoreError) {
         console.error("Failed to update Firestore:", firestoreError);
       }
-
-      const newCapturedOrders = {
-        ...capturedOrders,
-        [orderReference]: true,
-      };
-      setCapturedOrders(newCapturedOrders);
-      localStorage.setItem("capturedOrders", JSON.stringify(newCapturedOrders));
     } catch (error) {
       console.error('Capture error:', error);
       alert("Capture error: " + error.message);
@@ -211,6 +194,18 @@ export default function CustomerOrderList() {
 
       const paymentDetails = await response.json();
       console.log('Payment details:', paymentDetails);
+      
+      // Auto-capture suggestion for authorized but not captured payments
+      if (paymentDetails.state === 'AUTHORIZED' && paymentDetails.aggregate?.capturedAmount?.value === 0) {
+        const shouldAutoCapture = confirm('Payment is authorized but not captured. Auto-capture now?');
+        if (shouldAutoCapture) {
+          const order = orders.find(o => o.orderReference === orderReference);
+          if (order) {
+            await handleCapture(orderReference, order.totalPrice);
+            return; // Exit early, handleCapture will show success message
+          }
+        }
+      }
       
       // Show key payment info in alert
       const amount = paymentDetails.amount?.value || 'Unknown';
@@ -281,22 +276,28 @@ Available to capture: ${amount - aggregatedCaptureAmount} øre (${((amount - agg
                     <strong>Totalt:</strong>{" "}
                     {order.totalPrice ? `${order.totalPrice} kr` : "Ukjent"}
                   </div>
-                  {order.captureStatus && (
-                    <div>
-                      <strong>Capture Status:</strong>{" "}
-                      <span style={{ 
-                        color: order.captureStatus === "CAPTURED" ? "green" : "orange",
-                        fontWeight: "bold"
-                      }}>
-                        {order.captureStatus}
+                  
+                  {/* CAPTURE STATUS - Based purely on database auto-capture */}
+                  <div>
+                    <strong>Capture Status:</strong>{" "}
+                    <span style={{ 
+                      color: isOrderCaptured(order) ? "green" : "orange",
+                      fontWeight: "bold"
+                    }}>
+                      {order.captureStatus || "PENDING"}
+                    </span>
+                    {order.capturedAt && (
+                      <span style={{ fontSize: "0.9em", marginLeft: "8px" }}>
+                        ({new Date(order.capturedAt).toLocaleString()})
                       </span>
-                      {order.capturedAt && (
-                        <span style={{ fontSize: "0.9em", marginLeft: "8px" }}>
-                          ({new Date(order.capturedAt).toLocaleString()})
-                        </span>
-                      )}
-                    </div>
-                  )}
+                    )}
+                    {isOrderCaptured(order) && (
+                      <span style={{ fontSize: "0.8em", marginLeft: "8px", color: "green" }}>
+                        ✅ Auto-captured
+                      </span>
+                    )}
+                  </div>
+
                   <ul className="customer-orders-products">
                     {(order.items || order.products || []).map((item, i) => {
                       const totalItemPrice =
@@ -344,22 +345,17 @@ Available to capture: ${amount - aggregatedCaptureAmount} øre (${((amount - agg
                     >
                       Check Status
                     </button>
+                    
+                    {/* CAPTURE BUTTON - Based purely on database status */}
                     <button
                       style={{ padding: "6px 12px" }}
-                      className={
-                        capturedOrders[order.orderReference]
-                          ? "captured-order"
-                          : "capture-btn"
-                      }
-                      onClick={() =>
-                        handleCapture(order.orderReference, order.totalPrice)
-                      }
-                      disabled={capturedOrders[order.orderReference]}
+                      className={isOrderCaptured(order) ? "captured-order" : "capture-btn"}
+                      onClick={() => handleCapture(order.orderReference, order.totalPrice)}
+                      disabled={isOrderCaptured(order)}
                     >
-                      {capturedOrders[order.orderReference]
-                        ? "Payment Captured"
-                        : "Capture Payment"}
+                      {isOrderCaptured(order) ? "Payment Captured" : "Capture Payment"}
                     </button>
+                    
                     <button
                       style={{ padding: "6px 12px" }}
                       className={
