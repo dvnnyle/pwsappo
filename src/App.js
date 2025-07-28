@@ -18,10 +18,12 @@ import NewsForm from "./pages/News/NewsForm";
 import Settings from "./user/SettingsTabs/Settings";
 import Tickets from "./TicketSystem/Tickets";
 import Support from "./user/SettingsTabs/Support";
-import Orders from "./user/SettingsTabs/Orders"; // <-- Add this line
+import Orders from "./user/SettingsTabs/Orders";
+import Coupons from "./user/SettingsTabs/Coupons";
 
 import Admin from "./console/admin";
 import CustomerOrderList from "./console/CustomerOrderList";
+import NewCoupon from "./console/newCoupon.jsx";
 
 import PageTransition from "./comp/PageTransition";
 
@@ -169,6 +171,14 @@ function AnimatedRoutes() {
           }
         />
         <Route
+          path="/coupons"
+          element={
+            <PageTransition>
+              <Coupons />
+            </PageTransition>
+          }
+        />
+        <Route
           path="/customer-orders/:userId"
           element={
             <PageTransition>
@@ -181,6 +191,14 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <Admin />
+            </PageTransition>
+          }
+        />
+        <Route
+  path="/NewCoupon"
+          element={
+            <PageTransition>
+              <NewCoupon />
             </PageTransition>
           }
         />

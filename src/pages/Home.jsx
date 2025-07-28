@@ -97,7 +97,7 @@ export default function Home() {
       {/* Profile-style card buttons on Home page */}
       <hr style={{ width: "50%", margin: "20px auto 10px auto" }} />
       <div className="home-cards-wrapper" style={{ marginTop: 20 }}>
-        <ProfileCardButton emoji="💬" label="KUNDESERVICE" to="/kunderivce" vibrate={20} />
+        <ProfileCardButton emoji="💬" label="KUNDESERVICE" to="/SUPPORT" vibrate={20} />
       </div>
     </div>
   );

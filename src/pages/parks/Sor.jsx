@@ -3,7 +3,10 @@ import { FiArrowLeft } from 'react-icons/fi';
 import '../../style/global.css';
 import '../../style/Sor.css';
 import pwsImage from '../../assets/pws.png';
+import bdImage from '../../assets/bdimage.webp';
 import { FaInstagram, FaFacebookF, FaTiktok, FaGlobe } from 'react-icons/fa';
+import trampoline from '../../assets/trampoline.webp';
+import SocialWidget from '../../widgets/SocialWidget'; // Add this import
 
 export default function Sor() {
   const navigate = useNavigate();
@@ -35,7 +38,7 @@ export default function Sor() {
 
         <div className="social-icons" style={{ gap: '15px' }}>
           <a
-            href="https://www.instagram.com/playworld"
+            href="https://www.instagram.com/playworld.kristiansand"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
@@ -78,6 +81,61 @@ export default function Sor() {
         </div>
 
         <div className="park-card">
+          <h2 className="park-title">BURSDAGSFEIRING</h2>
+          <img
+            src={bdImage}
+            alt="Bursdagsfeiring"
+            className="birthday-image"
+            draggable={false}
+            onContextMenu={e => e.preventDefault()}
+          />
+          <button
+            className="bd-btn"
+            onClick={() => window.open("https://playworld.no/bursdagsfeiring-barnebursdag-lekeland/", "_blank")}
+          >
+            Bestill her
+          </button>
+          <p className="park-description">
+            Gjør bursdagen ekstra spesiell hos Playworld Sørlandet! Vi tilbyr egne bursdagspakker med aktiviteter, mat og moro for barn i alle aldre. Kontakt oss for booking og mer informasjon om våre bursdagstilbud.
+          </p>
+        </div>
+
+        {/* New card: FASILITETER */}
+        <div className="park-card">
+          <h2 className="park-title">FASILITETER</h2>
+          <p className="park-description">
+            Playworld Sørlandet har moderne fasiliteter som inkluderer kafé med mat og drikke, sitteområder for foreldre, garderober, gratis WiFi og gode parkeringsmuligheter.
+            Her finner du lekeland, trampolinepark, minigolf, digitale spill og en spennende ninja-løype. Vi har også et eget område for de minste barna, slik at hele familien kan ha det gøy sammen.
+                   <div className="park-facility-images">
+            <img src={trampoline} alt="Trampoline" draggable={false} onContextMenu={e => e.preventDefault()} />
+            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=200&q=80" alt="Fasilitet 2" draggable={false} onContextMenu={e => e.preventDefault()} />
+            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=200&q=80" alt="Fasilitet 3" draggable={false} onContextMenu={e => e.preventDefault()} />
+          </div>
+          
+          
+            <h4>LEKELAND | TRAMPOLINER | MINIGOLF | GAMING | DIGITALE SPILL | NINJA-LØYPE</h4>
+          </p>
+ 
+        </div>
+
+        <div className="park-card">
+          <h2 className="park-title">TILBUD & ARRANGEMENTER</h2>
+          <p className="park-description">
+            Vi tilbyr spesielle pakker for bursdager, skoleklasser og grupper. Kontakt oss for mer informasjon om våre arrangementer og kampanjer!
+          </p>
+        </div>
+
+        <div style={{ textAlign: 'center', margin: '10px 0' }}>
+          <button
+            className="tickets-btn"
+            onClick={() => navigate('/products')}
+          >
+            KJØP BILETTER HER
+          </button>
+        </div>
+   
+
+        <div className="park-card">
           <div className="park-loc">
             <strong>ÅPNINGSTIDER</strong>
             <p className="info-text">
@@ -91,27 +149,40 @@ export default function Sor() {
               </span>
               <br />
               Barstølveien 35, 4636 Kristiansand
-            </p> <br />
-                      <strong>KONTAKT</strong>
+            </p>
+            <br />
+            <strong>KONTAKT</strong>
             <p className="info-text">
-              Telefon: 944 67 290
-              <br /> E-Post: post@playworld.no
-
-
+              Telefon:{" "}
+              <a href="tel:94467290" style={{ color: "#20b14c", textDecoration: "none" }}>
+                944 67 290
+              </a>
+              <br />
+              E-Post:{" "}
+              <a href="mailto:post@playworld.no" style={{ color: "#20b14c", textDecoration: "none" }}>
+                post@playworld.no
+              </a>
             </p>
           </div>
         </div>
 
-    <div style={{ textAlign: 'center', margin: '15px 0' }}>
-      <button
-        className="tickets-btn"
-        onClick={() => navigate('/products')}
-      >
-        Biletter
-      </button>
-    </div>
+        {/* Social Feed Section */}
+<div className="social-feed-container">
+  <div className="social-feed-line"></div>
+  
+  <h2 className="social-feed-title">
+    SOCIAL FEED
+  </h2>
+  
+  <div className="social-feed-line"></div>
+</div>
 
-  <div className="social-icons" style={{ gap: '15px' }}></div>
+
+        <SocialWidget />
+
+
+
+        <div className="social-icons" style={{ gap: '15px' }}></div>
       </div>
     </div>
   );

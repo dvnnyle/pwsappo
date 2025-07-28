@@ -1,21 +1,20 @@
 .park-card {
-  width: calc(100% - 20px); /* full width minus horizontal margins */
-  margin: 10px 10px 0 10px; /* top right bottom left */
+  width: calc(100% - 20px);
+  margin: 10px 10px 0 10px;
   padding: 10px;
-  width: calc(100% - 20px); /* full width minus horizontal margins */
+  width: calc(100% - 20px);
   background: #FFF;
   border-radius: 25px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   text-align: center;
   box-sizing: border-box;
+    animation: couponFadeIn 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+
 }
-
-
 
 *, *::before, *::after {
   box-sizing: inherit;
 }
-
 
 .park-image {
   width: 100%;
@@ -25,8 +24,45 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-    user-select: none;
+  user-select: none;
   pointer-events: auto;
+}
+
+.birthday-image {
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 25px;
+  max-height: 500px;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.tickets-btn {
+  font-size: 1.1rem;
+  background: linear-gradient(145deg, #ff9100 0%, #e98708 100%);
+  border: none;
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: 'Poppins';
+  font-weight: 600;
+  width: 100%;
+  padding: 12px;
+  width: calc(100% - 20px);
+}
+
+.bd-btn {
+  font-size: 1rem;
+  background-color: #20b14c;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: 'Poppins';
+  font-weight: 600;
+  width: 100%;
+  padding: 12px;
 }
 
 .park-title {
@@ -34,10 +70,9 @@
   font-size: 1.5rem;
   color: #212121;
   text-transform: uppercase;
-    margin-top: 10px;
-    margin-bottom: 0;
-      text-align: center;
-
+  margin-top: 10px;
+  margin-bottom: 0;
+  text-align: center;
 }
 
 .loc-title {
@@ -45,92 +80,138 @@
   font-size: 1.5rem;
   color: #212121;
   text-transform: uppercase;
-    margin-top: 10px;
-    margin-bottom: 0;
-      text-align: center;
-
+  margin-top: 10px;
+  margin-bottom: 0;
+  text-align: center;
 }
-
-
-
 
 .park-description {
   font-size: 1rem;
-  color: #444;       /* dark but soft for easy reading */
+  color: #444;
   font-weight: 400;
-      padding: 10px;
-      margin: 0;
-         
-
+  padding: 10px;
+  margin-bottom: 0;
 }
 
 .park-subtitle{
-    color: #212121;
-  width: calc(100% - 20px); /* full width minus horizontal margins */
-  margin: 10px 10px 0 10px; /* top right bottom left */
+  color: #212121;
+  width: calc(100% - 20px);
+  margin: 10px 10px 0 10px;
   padding: 10px;
-  width: calc(100% - 20px); /* full width minus horizontal margins */
+  width: calc(100% - 20px);
   background: #FFF;
   border-radius: 25px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   text-align: center;
   box-sizing: border-box;
+    animation: couponFadeIn 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+
 }
 
-
+.content-wrapper {
+  margin-bottom: -10px;
+}
 
 .park-loc {
   font-size: 1rem;
-  color: #212121;       /* dark but soft for easy reading */
+  color: #212121;
   line-height: 1.6;
   margin: 0;
   font-weight: 400;
-    text-align: left;
-    padding: 10px;
-    
-
+  text-align: left;
+  padding: 20px;
 }
-
 
 .info-text{
   margin: 0;
-      text-align: left;
-
+  text-align: left;
 }
-
 
 .social-icons {
   display: flex;
-  justify-content: center; /* center icons horizontally */
+  justify-content: center;
   gap: 25px;
-  margin: 10px 0 10px 0;   /* remove left margin */
-  padding-left: 0;         /* ensure no left padding */
-  width: 100%;             /* full width */
+  margin: 10px 0 10px 0;
+  padding-left: 0;
+  width: 100%;
   box-sizing: border-box;
+    animation: couponFadeIn 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+
 }
 .social-icons a {
-      color: white;             /* Make the icons white */
-
-  transition: transform 0.2s ease;
+  color: white;
+  transition: transform 0.15s cubic-bezier(.4,2,.6,1), box-shadow 0.15s;
   display: flex;
   align-items: center;
   padding: 20px;
   border: 1px solid #FFF;
   border-radius: 50%;
-
+}
+.social-icons a:active {
+  transform: scale(0.92) rotate(-4deg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 
-.tickets-btn {
-  width: calc(100% - 20px);
-  font-size: 1rem;
-  background-color: #20b14c; /* green */
-  color: white;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.park-facility-images {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
 }
 
-.tickets-btn:hover {
-  background-color: #178637; /* darker green */
+.park-facility-images img {
+  width: 100px;
+  max-width: 30vw;
+  height: 100px;
+  max-height: 30vw;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+@media (max-width: 600px) {
+  .park-facility-images img {
+    width: 70px;
+    height: 70px;
+    max-width: 40vw;
+    max-height: 40vw;
+  }
+}
+
+
+@keyframes park-cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Social Feed Section */
+.social-feed-container {
+  display: flex;
+  align-items: center;
+  margin: 32px 20px 20px 20px;
+  
+  gap: 16px;
+}
+
+.social-feed-line {
+  flex: 1;
+  height: 1px;
+  background: #ffffff;
+}
+
+.social-feed-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+
 }
