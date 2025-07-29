@@ -10,6 +10,7 @@ import BookingPage from "./pages/BookingPage";
 import Products from "./shop/Products";
 import CreateUser from "./user/CreateUser";
 import LogIn from "./user/LogIn";
+import ForgotPassword from "./user/ForgotPassword";
 import Profile from "./user/Profile";
 import MyCart from "./shop/MyCart";
 import PaymentReturn from "./shop/PaymentReturn";
@@ -22,6 +23,7 @@ import Orders from "./user/SettingsTabs/Orders";
 import Coupons from "./user/SettingsTabs/Coupons";
 
 import Admin from "./console/admin";
+import AdminDashboard from "./console/AdminDashboard";
 import CustomerOrderList from "./console/CustomerOrderList";
 import NewCoupon from "./console/newCoupon.jsx";
 
@@ -123,6 +125,14 @@ function AnimatedRoutes() {
           }
         />
         <Route
+          path="/forgot-password"
+          element={
+            <PageTransition>
+              <ForgotPassword />
+            </PageTransition>
+          }
+        />
+        <Route
           path="/MyCart"
           element={
             <PageTransition>
@@ -195,7 +205,15 @@ function AnimatedRoutes() {
           }
         />
         <Route
-  path="/NewCoupon"
+          path="/AdminDashboard"
+          element={
+            <PageTransition>
+              <AdminDashboard />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/NewCoupon"
           element={
             <PageTransition>
               <NewCoupon />

@@ -13,7 +13,7 @@ app.use(cors());
 // Parse JSON bodies
 app.use(express.json());
 
-// Load env variables
+// Load env variables - PRODUCTION URLS
 const {
   VIPPS_CLIENT_ID,
   VIPPS_CLIENT_SECRET,
@@ -23,8 +23,9 @@ const {
   VIPPS_SYSTEM_VERSION,
   VIPPS_PLUGIN_NAME,
   VIPPS_PLUGIN_VERSION,
-  VIPPS_OAUTH_URL,
-  VIPPS_PAYMENT_URL,
+  // PRODUCTION ENDPOINTS
+  VIPPS_OAUTH_URL = 'https://api.vipps.no/accesstoken/get', // Production OAuth URL
+  VIPPS_PAYMENT_URL = 'https://api.vipps.no/epayment/v1/payments', // Production Payment URL
 } = process.env;
 
 // Function to get Vipps access token
@@ -118,7 +119,7 @@ app.post('/create-payment', async (req, res) => {
   }
 });
 
-// Capture payment endpoint for Vipps ePayment API (test)
+// Capture payment endpoint - PRODUCTION URL
 app.post('/capture-payment', async (req, res) => {
   const { reference, amountValue } = req.body;
   try {
@@ -126,6 +127,7 @@ app.post('/capture-payment', async (req, res) => {
     const capturePayload = {
       modificationAmount: { currency: 'NOK', value: amountValue }
     };
+    // PRODUCTION URL
     const url = `https://api.vipps.no/epayment/v1/payments/${reference}/capture`;
     const response = await axios.post(
       url,
@@ -136,11 +138,11 @@ app.post('/capture-payment', async (req, res) => {
           'Ocp-Apim-Subscription-Key': VIPPS_SUBSCRIPTION_KEY,
           'Merchant-Serial-Number': VIPPS_MERCHANT_SERIAL_NUMBER,
           'Content-Type': 'application/json',
-          'Idempotency-Key': uuidv4(), // Add this header
+          'Idempotency-Key': uuidv4(),
         },
       }
     );
-    console.log(`Vipps payment captured for reference: ${reference}, amount: ${amountValue} NOK`);
+    console.log(`🚀 PRODUCTION: Vipps payment captured for reference: ${reference}, amount: ${amountValue} NOK`);
     res.json(response.data);
   } catch (error) {
     console.error('Error capturing Vipps payment:', error.response?.data || error.message);
@@ -151,11 +153,12 @@ app.post('/capture-payment', async (req, res) => {
   }
 });
 
-// Get payment details endpoint for debugging
+// Get payment details endpoint - PRODUCTION URL
 app.get('/payment-details/:reference', async (req, res) => {
   const { reference } = req.params;
   try {
     const accessToken = await getAccessToken();
+    // PRODUCTION URL
     const url = `https://api.vipps.no/epayment/v1/payments/${reference}`;
     const response = await axios.get(url, {
       headers: {
@@ -165,7 +168,7 @@ app.get('/payment-details/:reference', async (req, res) => {
         'Content-Type': 'application/json',
       },
     });
-    console.log(`Payment details for ${reference}:`, JSON.stringify(response.data, null, 2));
+    console.log(`🚀 PRODUCTION: Payment details for ${reference}:`, JSON.stringify(response.data, null, 2));
     res.json(response.data);
   } catch (error) {
     console.error('Error getting payment details:', error.response?.data || error.message);
@@ -176,7 +179,7 @@ app.get('/payment-details/:reference', async (req, res) => {
   }
 });
 
-// Refund payment endpoint for Vipps ePayment API
+// Refund payment endpoint - PRODUCTION URL
 app.post('/refund-payment', async (req, res) => {
   const { reference, amountValue } = req.body;
   try {
@@ -184,6 +187,7 @@ app.post('/refund-payment', async (req, res) => {
     const refundPayload = {
       modificationAmount: { currency: 'NOK', value: amountValue }
     };
+    // PRODUCTION URL
     const url = `https://api.vipps.no/epayment/v1/payments/${reference}/refund`;
     const response = await axios.post(
       url,
@@ -198,9 +202,8 @@ app.post('/refund-payment', async (req, res) => {
         },
       }
     );
-    // Log amount in øre and NOK
     console.log(
-      `Vipps payment refunded for reference: ${reference}, amount: ${amountValue} øre, conversion: ${(amountValue / 100).toFixed(2)} NOK`
+      `🚀 PRODUCTION: Vipps payment refunded for reference: ${reference}, amount: ${amountValue} øre, conversion: ${(amountValue / 100).toFixed(2)} NOK`
     );
     res.json(response.data);
   } catch (error) {
@@ -226,5 +229,5 @@ app.get('/*path', (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Vipps backend listening on port ${PORT}`);
+  console.log(`🚀 Vipps PRODUCTION backend listening on port ${PORT}`);
 });

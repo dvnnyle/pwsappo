@@ -8,7 +8,9 @@ export default function MyCart() {
   const [buyerName, setBuyerName] = useState(""); // new buyer name state
   const [email, setEmail] = useState(""); // Add this line with your other useState hooks
   const [loading, setLoading] = useState(false);
-const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
+  
+  // Use environment variable for base URL with localhost fallback for development
+  const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
@@ -68,7 +70,6 @@ const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
       email: email.trim(),
       reference: reference, // pass this unique reference
       returnUrl: `${baseUrl}/PaymentReturn`,
-//returnUrl: "http://localhost:3000/PaymentReturn",
       paymentDescription: `Betaling for ${cartItems.length} varer`,
     };
 

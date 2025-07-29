@@ -1,7 +1,6 @@
 // vipps.js
-//const BACKEND_URL = '';  // empty string means "same origin"
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || ''; // your backend URL
+// Use environment variable for backend URL with fallback
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://playworldapp.onrender.com';
 
 export async function createVippsPayment(paymentData) {
   const response = await fetch(`${BACKEND_URL}/create-payment`, {

@@ -3,7 +3,6 @@ import { db } from "../firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./Products.css";
-import { color } from "framer-motion";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -141,7 +140,7 @@ export default function Products() {
         {Object.entries(groupedProducts).map(([category, items]) => (
           <div key={category} className="category-group">
             <h3 className="category-title">🚀 {category.toUpperCase()}</h3>
-            <ul className="products-list">
+            <ul className="shop-products-list">
               {items.map(product => (
                 <li key={product.id} className="product-card">
                   <img

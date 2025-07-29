@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import {
   createUserWithEmailAndPassword,
-  updateProfile
+  updateProfile,
+  sendEmailVerification
 } from "firebase/auth";
 import {
   doc,
@@ -21,6 +22,7 @@ export default function CreateUser() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
+  const [userCreated, setUserCreated] = useState(null);
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -45,24 +47,74 @@ export default function CreateUser() {
         email: email.toLowerCase(),
         phone,
         createdAt: serverTimestamp(),
+        emailVerified: false, // Track verification status
       });
 
-      setMsg("User created successfully!");
+      // Send email verification
+      try {
+        console.log("🔄 Attempting to send email verification to:", user.email);
+        console.log("🔄 User emailVerified status:", user.emailVerified);
+        console.log("🔄 User object:", user);
+        
+        const actionCodeSettings = {
+          url: window.location.origin + '/login',
+          handleCodeInApp: false,
+        };
+        
+        await sendEmailVerification(user, actionCodeSettings);
+        console.log("✅ Email verification sent successfully to:", user.email);
+        setMsg("Bruker opprettet! Sjekk e-posten din for verifiseringslink.");
+        setUserCreated(user);
+      } catch (emailError) {
+        console.error("❌ Email verification failed:", emailError);
+        console.error("❌ Error code:", emailError.code);
+        console.error("❌ Error message:", emailError.message);
+        setMsg("Bruker opprettet, men e-postverifisering feilet: " + emailError.message);
+        setUserCreated(user);
+      }
+
       setName("");
       setEmail("");
       setPhone("");
       setPassword("");
 
-      // Redirect to login page after short delay
-      setTimeout(() => {
-        navigate("/login");
-      }, 1000);
+      // Don't auto-redirect, let user manually resend if needed
     } catch (error) {
       setMsg("Error: " + error.message);
     }
 
     setLoading(false);
   }
+
+  // Manual email verification send
+  const resendVerificationEmail = async () => {
+    if (!userCreated) {
+      console.log("❌ No user to resend email to");
+      return;
+    }
+    
+    try {
+      console.log("🔄 Manually resending email verification to:", userCreated.email);
+      console.log("🔄 User auth state:", {
+        uid: userCreated.uid,
+        email: userCreated.email,
+        emailVerified: userCreated.emailVerified,
+        isAnonymous: userCreated.isAnonymous
+      });
+      
+      await sendEmailVerification(userCreated);
+      console.log("✅ Manual email verification sent successfully");
+      setMsg("Verifiseringslink sendt på nytt! Sjekk e-posten din.");
+    } catch (error) {
+      console.error("❌ Manual email verification failed:", error);
+      console.error("❌ Full error object:", {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      setMsg("Feil ved sending av e-post: " + error.message);
+    }
+  };
 
   return (
     <div>
@@ -110,6 +162,42 @@ export default function CreateUser() {
 >
   {loading ? "Lagrer..." : "Opprett bruker"}
 </button>
+
+{userCreated && (
+  <div style={{ marginTop: '15px' }}>
+    <button
+      type="button"
+      onClick={resendVerificationEmail}
+      style={{ 
+        backgroundColor: '#20b14c',
+        color: 'white',
+        border: 'none',
+        padding: '10px 20px',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        marginRight: '10px'
+      }}
+    >
+      Send verifiseringslink på nytt
+    </button>
+    
+    <button
+      type="button"
+      onClick={() => navigate("/login")}
+      style={{ 
+        backgroundColor: '#6c757d',
+        color: 'white',
+        border: 'none',
+        padding: '10px 20px',
+        borderRadius: '8px',
+        cursor: 'pointer'
+      }}
+    >
+      Gå til innlogging
+    </button>
+  </div>
+)}
+
         {msg && <p>{msg}</p>}
       </form>
     </div>
